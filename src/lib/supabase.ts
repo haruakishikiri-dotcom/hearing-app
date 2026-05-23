@@ -9,9 +9,13 @@ if (!url || !anon) {
   );
 }
 
-export const supabase = createClient(url ?? '', anon ?? '', {
+// 未設定時はダミーURL/Keyでクライアントを生成し、画面は動くがDB操作はスキップさせる
+const safeUrl = url && url.startsWith('http') ? url : 'https://example.supabase.co';
+const safeAnon = anon || 'public-anon-placeholder';
+
+export const supabase = createClient(safeUrl, safeAnon, {
   realtime: { params: { eventsPerSecond: 5 } },
   auth: { persistSession: false },
 });
 
-export const supabaseConfigured = Boolean(url && anon);
+export const supabaseConfigured = Boolean(url && anon && url.startsWith('http'));
